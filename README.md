@@ -15,7 +15,7 @@ AiCogni/
 
 ## 在线预览
 
-工具链对比页（国内线 / 海外线）已通过 GitHub Pages 发布：
+工具链对比页（国内线 / 海外工具链推荐）已通过 GitHub Pages 发布：
 
 https://frog1205.github.io/AiCogni/
 

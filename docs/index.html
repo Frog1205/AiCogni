@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 工具链 — 国内线 / 海外线</title>
+<title>AI 工具链 — 国内线 / 海外工具链推荐</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,6 +63,20 @@
   }
 
   .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  .northstar{
+    position: absolute;
+    top: 64px;
+    right: 12px;
+    width: 220px;
+    height: 220px;
+    pointer-events: none;
+    z-index: 1;
+    filter: drop-shadow(0 0 28px rgba(143,168,255,0.28));
+  }
+  @media (max-width: 780px){
+    .northstar{ display: none; }
+  }
 
   /* ---------- Header ---------- */
   header{ padding: 108px 0 76px; }
@@ -287,13 +301,30 @@
 
 <div class="wrap">
 
+  <svg class="northstar" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="nsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#C9B8FF"/>
+        <stop offset="45%" stop-color="#8FA8FF"/>
+        <stop offset="100%" stop-color="#7EC8FF"/>
+      </linearGradient>
+    </defs>
+    <circle cx="100" cy="100" r="86" fill="none" stroke="url(#nsGrad)" stroke-opacity="0.15" stroke-width="1"/>
+    <path d="M100 14 C104 74 108 92 166 100 C108 108 104 126 100 186 C96 126 92 108 34 100 C92 92 96 74 100 14 Z" fill="url(#nsGrad)" opacity="0.85"/>
+    <path d="M100 52 C102 78 104 88 132 100 C104 112 102 122 100 148 C98 122 96 112 68 100 C96 88 98 78 100 52 Z" fill="#F5F4F8" opacity="0.9"/>
+    <circle cx="100" cy="100" r="3" fill="#F5F4F8"/>
+    <circle cx="150" cy="46" r="2.4" fill="#7EC8FF" opacity="0.8"/>
+    <circle cx="46" cy="150" r="2" fill="#C9B8FF" opacity="0.7"/>
+    <circle cx="160" cy="140" r="1.6" fill="#8FA8FF" opacity="0.6"/>
+  </svg>
+
   <header>
     <div class="eyebrow">Toolchain Map · 2026.06</div>
-    <h1>国内线<span class="slash">/</span><span class="grad">海外线</span></h1>
-    <p class="sub">同一套需求，两条独立的执行路径 — 国内线直连不折腾网络，海外线追求能力上限。</p>
+    <h1>国内线<span class="slash">/</span><span class="grad">海外工具链推荐</span></h1>
+    <p class="sub">同一套需求，两条独立的执行路径 — 国内线直连不折腾网络，海外工具链推荐追求能力上限。</p>
     <div class="legend">
       <div class="legend-item"><span class="lg-dot a"></span>国内直连</div>
-      <div class="legend-item"><span class="lg-dot b"></span>海外线</div>
+      <div class="legend-item"><span class="lg-dot b"></span>海外工具链推荐</div>
     </div>
   </header>
 
@@ -465,7 +496,7 @@
 
   <footer>
     <span>整理时点：2026年6月对话，各场景经2026年1-6月信源核实 · 工具按周迭代，使用前建议二次核实</span>
-    <span>国内线：直连优先 · 数据不出境　　海外线：能力上限优先</span>
+    <span>国内线：直连优先 · 数据不出境　　海外工具链推荐：能力上限优先</span>
   </footer>
 
 </div>
