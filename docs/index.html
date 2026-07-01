@@ -186,6 +186,18 @@
   }
   .tools .plus{ color: var(--text-faint); font-weight: 400; margin: 0 4px; font-size: 14px; }
 
+  .tools a, .map-from a, .map-to a{
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease, opacity .2s ease;
+  }
+  .tools a:hover, .map-from a:hover, .map-to a:hover{
+    border-bottom-color: currentColor;
+    opacity: 0.85;
+  }
+  .tools .no-link, .map-from .no-link, .map-to .no-link{ color: inherit; }
+
   .desc{
     font-size: 13.5px;
     line-height: 1.65;
@@ -291,12 +303,12 @@
       <div class="card-head"><span class="idx">01</span><span class="name">开发编程</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">Trae<span class="plus">+</span>CodeBuddy</div>
+        <div class="tools"><a href="https://www.trae.cn/" target="_blank" rel="noopener">Trae</a><span class="plus">+</span><a href="https://copilot.tencent.com/" target="_blank" rel="noopener">CodeBuddy</a></div>
         <div class="desc">Trae 切 <b>DeepSeek / GLM / MiniMax</b> 后端管日常 IDE；CodeBuddy 管微信生态与团队 CI/CD。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Claude Code<span class="plus">+</span>Cursor</div>
+        <div class="tools"><a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code</a><span class="plus">+</span><a href="https://cursor.com/" target="_blank" rel="noopener">Cursor</a></div>
         <div class="desc">Cursor 管可视化日常编码，Claude Code 跑重型 Agent 任务。</div>
       </div>
     </div>
@@ -305,12 +317,12 @@
       <div class="card-head"><span class="idx">02</span><span class="name">运营策划</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">豆包<span class="plus">+</span>通义千问</div>
+        <div class="tools"><a href="https://www.doubao.com/" target="_blank" rel="noopener">豆包</a><span class="plus">+</span><a href="https://www.tongyi.com/" target="_blank" rel="noopener">通义千问</a></div>
         <div class="desc">豆包响应快、交互自然；通义千问与钉钉办公生态深度打通。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">ChatGPT<span class="plus">+</span>Claude</div>
+        <div class="tools"><a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a><span class="plus">+</span><a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a></div>
         <div class="desc">ChatGPT 生态最全，联网、画图、插件一站式打通。</div>
       </div>
     </div>
@@ -319,12 +331,12 @@
       <div class="card-head"><span class="idx">03</span><span class="name">深度思考 / 探讨</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">DeepSeek<span class="plus">+</span>Kimi</div>
+        <div class="tools"><a href="https://chat.deepseek.com/" target="_blank" rel="noopener">DeepSeek</a><span class="plus">+</span><a href="https://www.kimi.com/" target="_blank" rel="noopener">Kimi</a></div>
         <div class="desc">DeepSeek 专家模式管逻辑推理，Kimi 管长文档检索，两者免费且互补。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Claude<span class="plus">/</span>GPT</div>
+        <div class="tools"><a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a><span class="plus">/</span><a href="https://chatgpt.com/" target="_blank" rel="noopener">GPT</a></div>
         <div class="desc">长上下文与深度推理场景优先 Claude。</div>
       </div>
     </div>
@@ -333,12 +345,12 @@
       <div class="card-head"><span class="idx">04</span><span class="name">方案文档</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">豆包 / 文心一言<span class="plus">+</span>WPS AI</div>
+        <div class="tools"><a href="https://www.doubao.com/" target="_blank" rel="noopener">豆包</a> / <a href="https://yiyan.baidu.com/" target="_blank" rel="noopener">文心一言</a><span class="plus">+</span><a href="https://ai.wps.cn/" target="_blank" rel="noopener">WPS AI</a></div>
         <div class="desc">中文公文语感最好，WPS 承接排版落地。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Claude<span class="plus">+</span>Word / Notion</div>
+        <div class="tools"><a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a><span class="plus">+</span><a href="https://www.microsoft.com/microsoft-365/word" target="_blank" rel="noopener">Word</a> / <a href="https://www.notion.so/" target="_blank" rel="noopener">Notion</a></div>
         <div class="desc">长文档结构组织与逻辑推演能力强。</div>
       </div>
     </div>
@@ -347,12 +359,12 @@
       <div class="card-head"><span class="idx">05</span><span class="name">出图</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">豆包<span class="plus">/</span>即梦</div>
+        <div class="tools"><a href="https://www.doubao.com/" target="_blank" rel="noopener">豆包</a><span class="plus">/</span><a href="https://jimeng.jianying.com/" target="_blank" rel="noopener">即梦</a></div>
         <div class="desc">中文字体与海报排版理解最好，商用营销首选，国内直连零门槛。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Image-2<span class="plus">/</span>Nano Banana 2<span class="plus">/</span>Lovart</div>
+        <div class="tools"><span class="no-link">Image-2</span><span class="plus">/</span><a href="https://gemini.google.com/" target="_blank" rel="noopener">Nano Banana 2</a><span class="plus">/</span><a href="https://www.lovart.ai/" target="_blank" rel="noopener">Lovart</a></div>
         <div class="desc">Nano Banana 2 是当前 Arena 文生图榜首，Lovart 接入它做设计 Agent 级批量出图，超长上下文可一次生成多图不中断。</div>
       </div>
     </div>
@@ -361,12 +373,12 @@
       <div class="card-head"><span class="idx">06</span><span class="name">出视频</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">Seedance 2.0<span class="plus">/</span>HappyHorse<span class="plus">/</span>视频 Skill</div>
+        <div class="tools"><a href="https://seed.bytedance.com/en/seedance2_0" target="_blank" rel="noopener">Seedance 2.0</a><span class="plus">/</span><a href="https://bailian.console.aliyun.com/" target="_blank" rel="noopener">HappyHorse</a><span class="plus">/</span><span class="no-link">视频 Skill</span></div>
         <div class="desc">字节 Seedance 2.0 与阿里 HappyHorse-1.0 互为盲测榜首，物理规律和运镜表现已进入全球第一梯队。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Seedance 2.0<span class="plus">/</span>HappyHorse<span class="plus">/</span>视频 Skill<span class="plus">/</span>Veo 3<span class="plus">/</span>Runway</div>
+        <div class="tools"><a href="https://seed.bytedance.com/en/seedance2_0" target="_blank" rel="noopener">Seedance 2.0</a><span class="plus">/</span><a href="https://bailian.console.aliyun.com/" target="_blank" rel="noopener">HappyHorse</a><span class="plus">/</span><span class="no-link">视频 Skill</span><span class="plus">/</span><a href="https://labs.google/fx/tools/flow" target="_blank" rel="noopener">Veo 3</a><span class="plus">/</span><a href="https://runwayml.com/" target="_blank" rel="noopener">Runway</a></div>
         <div class="desc">在国内两款基础上叠加 Veo 3 与 Runway 做补充。<b>Sora 已于 2026 年 3 月官宣关停，4 月底下线</b>，不再是可选项。</div>
       </div>
     </div>
@@ -375,12 +387,12 @@
       <div class="card-head"><span class="idx">07</span><span class="name">知识库搭建</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">Obsidian<span class="plus">/</span>飞书<span class="plus">/</span>得到大脑<span class="plus">/</span>ima</div>
+        <div class="tools"><a href="https://obsidian.md/" target="_blank" rel="noopener">Obsidian</a><span class="plus">/</span><a href="https://www.feishu.cn/" target="_blank" rel="noopener">飞书</a><span class="plus">/</span><a href="https://www.biji.com/" target="_blank" rel="noopener">得到大脑</a><span class="plus">/</span><a href="https://ima.qq.com/" target="_blank" rel="noopener">ima</a></div>
         <div class="desc">ima（腾讯，混元+DeepSeek 双引擎）微信生态适配最强；得到大脑管结构化写作产出。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Obsidian<span class="plus">/</span>飞书<span class="plus">/</span>得到大脑<span class="plus">/</span>ima<span class="plus">/</span>Notion</div>
+        <div class="tools"><a href="https://obsidian.md/" target="_blank" rel="noopener">Obsidian</a><span class="plus">/</span><a href="https://www.feishu.cn/" target="_blank" rel="noopener">飞书</a><span class="plus">/</span><a href="https://www.biji.com/" target="_blank" rel="noopener">得到大脑</a><span class="plus">/</span><a href="https://ima.qq.com/" target="_blank" rel="noopener">ima</a><span class="plus">/</span><a href="https://www.notion.so/" target="_blank" rel="noopener">Notion</a></div>
         <div class="desc">同一套工具再加 Notion，实际通过 <b>MCP + CLI</b> 把各知识库连成一条检索链路，而非切换独立入口。</div>
       </div>
     </div>
@@ -389,12 +401,12 @@
       <div class="card-head"><span class="idx">08</span><span class="name">数据分析 / 挖掘</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">智谱清言<span class="plus">/</span>DeepSeek</div>
+        <div class="tools"><a href="https://chatglm.cn/" target="_blank" rel="noopener">智谱清言</a><span class="plus">/</span><a href="https://chat.deepseek.com/" target="_blank" rel="noopener">DeepSeek</a></div>
         <div class="desc">智谱清言内置代码解释器，免费出图表。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Claude Code<span class="plus">/</span>ChatGPT ADA</div>
+        <div class="tools"><a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code</a><span class="plus">/</span><a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT ADA</a></div>
         <div class="desc">Advanced Data Analysis 功能全面，适合复杂建模。</div>
       </div>
     </div>
@@ -403,12 +415,12 @@
       <div class="card-head"><span class="idx">09</span><span class="name">模型部署 / 微调</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">Ollama<span class="plus">+</span>vLLM</div>
+        <div class="tools"><a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a><span class="plus">+</span><a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a></div>
         <div class="desc">本地/私有化部署主流方案，国内外通用，接 Qwen / DeepSeek 等开源权重不依赖海外网络。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">Ollama<span class="plus">+</span>vLLM</div>
+        <div class="tools"><a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a><span class="plus">+</span><a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a></div>
         <div class="desc">同一套工具链，接 Llama / Mistral 等开源权重，生态与文档更成熟。</div>
       </div>
     </div>
@@ -417,12 +429,12 @@
       <div class="card-head"><span class="idx">10</span><span class="name">原生智能体部署</span></div>
       <div class="col col-a">
         <span class="tag"><span class="d"></span>国内</span>
-        <div class="tools">OpenClaw<span class="plus">/</span>Hermes<span class="plus">/</span>WorkBuddy</div>
+        <div class="tools"><a href="https://openclaw.ai/" target="_blank" rel="noopener">OpenClaw</a><span class="plus">/</span><a href="https://hermes-agent.nousresearch.com/" target="_blank" rel="noopener">Hermes</a><span class="plus">/</span><a href="https://www.codebuddy.cn/work/" target="_blank" rel="noopener">WorkBuddy</a></div>
         <div class="desc">同一套开源 Agent 底座，接阿里云百炼 / DeepSeek / Kimi / MiniMax 做模型后端，7×24 自动化执行、多平台（钉钉/飞书/微信）接入。</div>
       </div>
       <div class="col col-b">
         <span class="tag"><span class="d"></span>海外</span>
-        <div class="tools">OpenClaw<span class="plus">/</span>Hermes<span class="plus">/</span>WorkBuddy</div>
+        <div class="tools"><a href="https://openclaw.ai/" target="_blank" rel="noopener">OpenClaw</a><span class="plus">/</span><a href="https://hermes-agent.nousresearch.com/" target="_blank" rel="noopener">Hermes</a><span class="plus">/</span><a href="https://www.codebuddy.cn/work/" target="_blank" rel="noopener">WorkBuddy</a></div>
         <div class="desc">同一套底座，切 Claude / GPT / Gemini 做模型后端，Hermes 自带三层记忆架构和自进化闭环，适合长期无人值守场景。</div>
       </div>
     </div>
@@ -434,19 +446,19 @@
     <p class="panel-sub">已习惯某个海外产品，想知道国内换哪个 — 底座模型统一走 DeepSeek / GLM / MiniMax M3</p>
     <div class="map">
       <div class="map-row">
-        <div class="map-from">Codex + ChatGPT Plus</div>
+        <div class="map-from"><a href="https://chatgpt.com/codex" target="_blank" rel="noopener">Codex</a> + <a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT Plus</a></div>
         <div class="map-arrow">→</div>
-        <div class="map-to">Trae（DeepSeek 后端）+ DeepSeek 官方</div>
+        <div class="map-to"><a href="https://www.trae.cn/" target="_blank" rel="noopener">Trae</a>（DeepSeek 后端）+ <a href="https://chat.deepseek.com/" target="_blank" rel="noopener">DeepSeek 官方</a></div>
       </div>
       <div class="map-row">
-        <div class="map-from">Claude Code + Claude</div>
+        <div class="map-from"><a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code</a> + <a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a></div>
         <div class="map-arrow">→</div>
-        <div class="map-to">CodeBuddy（GLM 后端）+ 智谱清言</div>
+        <div class="map-to"><a href="https://copilot.tencent.com/" target="_blank" rel="noopener">CodeBuddy</a>（GLM 后端）+ <a href="https://chatglm.cn/" target="_blank" rel="noopener">智谱清言</a></div>
       </div>
       <div class="map-row">
-        <div class="map-from">Antigravity + Gemini</div>
+        <div class="map-from"><a href="https://antigravity.google/" target="_blank" rel="noopener">Antigravity</a> + <a href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a></div>
         <div class="map-arrow">→</div>
-        <div class="map-to">MiniMax Code（M3 原生 Agent Team）+ 海螺 AI</div>
+        <div class="map-to"><a href="https://agent.minimax.io/" target="_blank" rel="noopener">MiniMax Code</a>（M3 原生 Agent Team）+ <a href="https://hailuoai.com/" target="_blank" rel="noopener">海螺 AI</a></div>
       </div>
     </div>
   </div>
