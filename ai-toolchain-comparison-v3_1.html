@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 工具链 — 国内线 / 海外线</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0A0F;
+    --bg-2: #0E0E15;
+    --surface: rgba(255,255,255,0.035);
+    --surface-hover: rgba(255,255,255,0.055);
+    --border: rgba(255,255,255,0.09);
+    --border-soft: rgba(255,255,255,0.06);
+    --text: #F5F4F8;
+    --text-dim: #A6A3B4;
+    --text-faint: #625F72;
+    --grad-hero: linear-gradient(120deg, #C9B8FF 0%, #8FA8FF 45%, #7EC8FF 100%);
+    --a1: #FFB877;
+    --a2: #FF7A6B;
+    --b1: #8FA8FF;
+    --b2: #6E7CF5;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-font-smoothing:antialiased;}
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ambient background glow */
+  .glow{
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .glow.g1{
+    width: 640px; height: 640px;
+    top: -260px; left: -160px;
+    background: radial-gradient(circle, rgba(139,127,255,0.35), transparent 70%);
+  }
+  .glow.g2{
+    width: 560px; height: 560px;
+    top: 200px; right: -220px;
+    background: radial-gradient(circle, rgba(126,200,255,0.22), transparent 70%);
+  }
+  .glow.g3{
+    width: 700px; height: 700px;
+    bottom: -320px; left: 30%;
+    background: radial-gradient(circle, rgba(255,122,107,0.14), transparent 70%);
+  }
+
+  .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ---------- Header ---------- */
+  header{ padding: 108px 0 76px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 7px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    margin-bottom: 32px;
+  }
+  .eyebrow::before{
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: linear-gradient(135deg, #C9B8FF, #7EC8FF);
+    box-shadow: 0 0 10px rgba(143,168,255,0.8);
+  }
+  h1{
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-size: clamp(42px, 6.2vw, 78px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0 0 28px;
+  }
+  h1 .grad{
+    background: var(--grad-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  h1 .slash{
+    color: var(--text-faint);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    margin: 0 6px;
+  }
+  .sub{
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    max-width: 540px;
+    margin: 0 0 44px;
+    font-weight: 400;
+  }
+  .legend{ display:flex; gap: 32px; }
+  .legend-item{
+    display:flex; align-items:center; gap: 9px;
+    font-size: 13px; font-weight: 500; color: var(--text-dim);
+  }
+  .lg-dot{ width:8px; height:8px; border-radius:50%; }
+  .lg-dot.a{ background: linear-gradient(135deg, var(--a1), var(--a2)); }
+  .lg-dot.b{ background: linear-gradient(135deg, var(--b1), var(--b2)); }
+
+  /* ---------- Cards ---------- */
+  .cards{ padding: 8px 0 24px; display:flex; flex-direction:column; gap: 16px; }
+
+  .card{
+    border: 1px solid var(--border-soft);
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 190px 1fr 1fr;
+    gap: 8px;
+    transition: border-color .25s ease, background .25s ease, transform .25s ease;
+  }
+  .card:hover{
+    border-color: var(--border);
+    background: var(--surface-hover);
+    transform: translateY(-2px);
+  }
+
+  .card-head{ display:flex; flex-direction:column; gap: 10px; padding-right: 12px; }
+  .card-head .idx{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-faint);
+  }
+  .card-head .name{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .col{ padding: 0 8px; border-left: 1px solid var(--border-soft); }
+  .col:first-of-type{ }
+
+  .tag{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .tag .d{ width:6px; height:6px; border-radius:50%; }
+  .col-a .tag{ color: var(--a1); }
+  .col-a .tag .d{ background: linear-gradient(135deg, var(--a1), var(--a2)); }
+  .col-b .tag{ color: var(--b1); }
+  .col-b .tag .d{ background: linear-gradient(135deg, var(--b1), var(--b2)); }
+
+  .tools{
+    font-family: 'Inter', sans-serif;
+    font-size: 16.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .tools .plus{ color: var(--text-faint); font-weight: 400; margin: 0 4px; font-size: 14px; }
+
+  .desc{
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text-dim);
+  }
+  .desc b{ color: var(--text); font-weight: 600; }
+
+  /* ---------- Substitution panel ---------- */
+  .panel{
+    margin: 48px 0 56px;
+    border-radius: 24px;
+    padding: 44px;
+    background: linear-gradient(160deg, rgba(139,127,255,0.09), rgba(126,200,255,0.04));
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .panel h2{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .panel .panel-sub{
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .map-row{
+    display:grid;
+    grid-template-columns: 1fr 36px 1fr;
+    align-items:center;
+    padding: 18px 0;
+    border-top: 1px solid var(--border-soft);
+    gap: 16px;
+  }
+  .map-row:first-of-type{ border-top: none; }
+  .map-from{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    text-align: right;
+  }
+  .map-arrow{
+    text-align:center;
+    background: var(--grad-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .map-to{
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  footer{
+    padding: 32px 0 88px;
+    display:flex; justify-content: space-between; flex-wrap:wrap; gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border-soft);
+  }
+
+  @media (max-width: 780px){
+    header{ padding: 72px 0 48px; }
+    .card{ grid-template-columns: 1fr; gap: 20px; padding: 26px; }
+    .card-head{ flex-direction: row; align-items:center; gap: 12px; padding-right: 0; }
+    .col{ border-left: none; padding: 0; border-top: 1px solid var(--border-soft); padding-top: 18px; }
+    .panel{ padding: 28px; }
+    .map-row{ grid-template-columns: 1fr; text-align: left; gap: 4px; }
+    .map-from{ text-align: left; }
+    .map-arrow{ text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+<div class="glow g3"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Toolchain Map · 2026.06</div>
+    <h1>国内线<span class="slash">/</span><span class="grad">海外线</span></h1>
+    <p class="sub">同一套需求，两条独立的执行路径 — 国内线直连不折腾网络，海外线追求能力上限。</p>
+    <div class="legend">
+      <div class="legend-item"><span class="lg-dot a"></span>国内直连</div>
+      <div class="legend-item"><span class="lg-dot b"></span>海外线</div>
+    </div>
+  </header>
+
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-head"><span class="idx">01</span><span class="name">开发编程</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">Trae<span class="plus">+</span>CodeBuddy</div>
+        <div class="desc">Trae 切 <b>DeepSeek / GLM / MiniMax</b> 后端管日常 IDE；CodeBuddy 管微信生态与团队 CI/CD。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Claude Code<span class="plus">+</span>Cursor</div>
+        <div class="desc">Cursor 管可视化日常编码，Claude Code 跑重型 Agent 任务。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">02</span><span class="name">运营策划</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">豆包<span class="plus">+</span>通义千问</div>
+        <div class="desc">豆包响应快、交互自然；通义千问与钉钉办公生态深度打通。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">ChatGPT<span class="plus">+</span>Claude</div>
+        <div class="desc">ChatGPT 生态最全，联网、画图、插件一站式打通。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">03</span><span class="name">深度思考 / 探讨</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">DeepSeek<span class="plus">+</span>Kimi</div>
+        <div class="desc">DeepSeek 专家模式管逻辑推理，Kimi 管长文档检索，两者免费且互补。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Claude<span class="plus">/</span>GPT</div>
+        <div class="desc">长上下文与深度推理场景优先 Claude。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">04</span><span class="name">方案文档</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">豆包 / 文心一言<span class="plus">+</span>WPS AI</div>
+        <div class="desc">中文公文语感最好，WPS 承接排版落地。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Claude<span class="plus">+</span>Word / Notion</div>
+        <div class="desc">长文档结构组织与逻辑推演能力强。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">05</span><span class="name">出图</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">豆包<span class="plus">/</span>即梦</div>
+        <div class="desc">中文字体与海报排版理解最好，商用营销首选，国内直连零门槛。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Image-2<span class="plus">/</span>Nano Banana 2<span class="plus">/</span>Lovart</div>
+        <div class="desc">Nano Banana 2 是当前 Arena 文生图榜首，Lovart 接入它做设计 Agent 级批量出图，超长上下文可一次生成多图不中断。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">06</span><span class="name">出视频</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">Seedance 2.0<span class="plus">/</span>HappyHorse<span class="plus">/</span>视频 Skill</div>
+        <div class="desc">字节 Seedance 2.0 与阿里 HappyHorse-1.0 互为盲测榜首，物理规律和运镜表现已进入全球第一梯队。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Seedance 2.0<span class="plus">/</span>HappyHorse<span class="plus">/</span>视频 Skill<span class="plus">/</span>Veo 3<span class="plus">/</span>Runway</div>
+        <div class="desc">在国内两款基础上叠加 Veo 3 与 Runway 做补充。<b>Sora 已于 2026 年 3 月官宣关停，4 月底下线</b>，不再是可选项。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">07</span><span class="name">知识库搭建</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">Obsidian<span class="plus">/</span>飞书<span class="plus">/</span>得到大脑<span class="plus">/</span>ima</div>
+        <div class="desc">ima（腾讯，混元+DeepSeek 双引擎）微信生态适配最强；得到大脑管结构化写作产出。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Obsidian<span class="plus">/</span>飞书<span class="plus">/</span>得到大脑<span class="plus">/</span>ima<span class="plus">/</span>Notion</div>
+        <div class="desc">同一套工具再加 Notion，实际通过 <b>MCP + CLI</b> 把各知识库连成一条检索链路，而非切换独立入口。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">08</span><span class="name">数据分析 / 挖掘</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">智谱清言<span class="plus">/</span>DeepSeek</div>
+        <div class="desc">智谱清言内置代码解释器，免费出图表。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Claude Code<span class="plus">/</span>ChatGPT ADA</div>
+        <div class="desc">Advanced Data Analysis 功能全面，适合复杂建模。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">09</span><span class="name">模型部署 / 微调</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">Ollama<span class="plus">+</span>vLLM</div>
+        <div class="desc">本地/私有化部署主流方案，国内外通用，接 Qwen / DeepSeek 等开源权重不依赖海外网络。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">Ollama<span class="plus">+</span>vLLM</div>
+        <div class="desc">同一套工具链，接 Llama / Mistral 等开源权重，生态与文档更成熟。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="idx">10</span><span class="name">原生智能体部署</span></div>
+      <div class="col col-a">
+        <span class="tag"><span class="d"></span>国内</span>
+        <div class="tools">OpenClaw<span class="plus">/</span>Hermes<span class="plus">/</span>WorkBuddy</div>
+        <div class="desc">同一套开源 Agent 底座，接阿里云百炼 / DeepSeek / Kimi / MiniMax 做模型后端，7×24 自动化执行、多平台（钉钉/飞书/微信）接入。</div>
+      </div>
+      <div class="col col-b">
+        <span class="tag"><span class="d"></span>海外</span>
+        <div class="tools">OpenClaw<span class="plus">/</span>Hermes<span class="plus">/</span>WorkBuddy</div>
+        <div class="desc">同一套底座，切 Claude / GPT / Gemini 做模型后端，Hermes 自带三层记忆架构和自进化闭环，适合长期无人值守场景。</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel">
+    <h2>平替速查</h2>
+    <p class="panel-sub">已习惯某个海外产品，想知道国内换哪个 — 底座模型统一走 DeepSeek / GLM / MiniMax M3</p>
+    <div class="map">
+      <div class="map-row">
+        <div class="map-from">Codex + ChatGPT Plus</div>
+        <div class="map-arrow">→</div>
+        <div class="map-to">Trae（DeepSeek 后端）+ DeepSeek 官方</div>
+      </div>
+      <div class="map-row">
+        <div class="map-from">Claude Code + Claude</div>
+        <div class="map-arrow">→</div>
+        <div class="map-to">CodeBuddy（GLM 后端）+ 智谱清言</div>
+      </div>
+      <div class="map-row">
+        <div class="map-from">Antigravity + Gemini</div>
+        <div class="map-arrow">→</div>
+        <div class="map-to">MiniMax Code（M3 原生 Agent Team）+ 海螺 AI</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>整理时点：2026年6月对话，各场景经2026年1-6月信源核实 · 工具按周迭代，使用前建议二次核实</span>
+    <span>国内线：直连优先 · 数据不出境　　海外线：能力上限优先</span>
+  </footer>
+
+</div>
+</body>
+</html>
