@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>后院主权 AI · Mac Studio + GLM-5.2 离网部署指南</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg2: #111823;
+    --card: #151e2b;
+    --card2: #1a2536;
+    --border: #263548;
+    --text: #dbe4f0;
+    --muted: #8fa3bb;
+    --accent: #4dd39a;      /* solar green */
+    --accent2: #ffb347;     /* generator orange */
+    --accent3: #5ab8ff;     /* mac blue */
+    --danger: #ff7a7a;
+    --mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    line-height: 1.7;
+  }
+  a { color: var(--accent3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,15,20,.9); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 4px; padding: 10px 16px; overflow-x: auto;
+    justify-content: center;
+  }
+  nav a {
+    color: var(--muted); font-size: 14px; padding: 6px 14px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  nav a:hover { color: var(--text); background: var(--card); text-decoration: none; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- hero ---------- */
+  header { text-align: center; padding: 72px 20px 48px; position: relative; overflow: hidden; }
+  header::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(77,211,154,.12), transparent);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block; font-size: 13px; color: var(--accent);
+    border: 1px solid rgba(77,211,154,.4); border-radius: 20px;
+    padding: 4px 14px; margin-bottom: 20px; letter-spacing: 1px;
+  }
+  h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -.5px; }
+  h1 .grad {
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { color: var(--muted); font-size: 17px; margin-top: 14px; max-width: 640px; margin-left: auto; margin-right: auto; }
+  .kit {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 28px;
+  }
+  .kit span {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 16px; font-size: 14px; color: var(--text);
+  }
+  .kit span b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- sections ---------- */
+  section { padding: 56px 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 26px; margin-bottom: 8px; }
+  h2 .num { color: var(--accent); font-family: var(--mono); font-size: 20px; margin-right: 10px; }
+  .lede { color: var(--muted); margin-bottom: 28px; }
+  h3 { font-size: 18px; margin: 26px 0 12px; color: var(--accent3); }
+
+  .grid { display: grid; gap: 16px; }
+  .grid.c2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px;
+  }
+  .card h4 { font-size: 16px; margin-bottom: 8px; }
+  .card p { font-size: 14.5px; color: var(--muted); }
+  .card .big { font-size: 26px; font-weight: 700; color: var(--text); font-family: var(--mono); }
+
+  /* ---------- callouts ---------- */
+  .callout {
+    border-left: 4px solid var(--accent2); background: rgba(255,179,71,.07);
+    border-radius: 0 12px 12px 0; padding: 16px 20px; margin: 20px 0; font-size: 14.5px;
+  }
+  .callout.red { border-color: var(--danger); background: rgba(255,122,122,.07); }
+  .callout.green { border-color: var(--accent); background: rgba(77,211,154,.07); }
+  .callout b:first-child { display: block; margin-bottom: 4px; }
+
+  /* ---------- tables ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 16px 0; }
+  th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+  tr.hl { background: rgba(77,211,154,.06); }
+  tr.hl td:first-child { border-left: 3px solid var(--accent); }
+  .tag { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 10px; font-weight: 600; }
+  .tag.g { background: rgba(77,211,154,.15); color: var(--accent); }
+  .tag.o { background: rgba(255,179,71,.15); color: var(--accent2); }
+  .tag.r { background: rgba(255,122,122,.15); color: var(--danger); }
+
+  /* ---------- code ---------- */
+  .codeblock {
+    position: relative; background: #0d1219; border: 1px solid var(--border);
+    border-radius: 12px; margin: 14px 0; overflow: hidden;
+  }
+  .codeblock .cb-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 16px; border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  .codeblock pre {
+    padding: 16px; overflow-x: auto; font-family: var(--mono);
+    font-size: 13.5px; line-height: 1.6; color: #c9e0b8;
+  }
+  .codeblock .cmt { color: #5f7285; }
+  .copy-btn {
+    background: var(--card2); color: var(--muted); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 12px; cursor: pointer;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  /* ---------- steps ---------- */
+  .step { display: flex; gap: 18px; margin: 22px 0; }
+  .step .n {
+    flex: 0 0 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    color: #08131c; font-weight: 800; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step .body { flex: 1; min-width: 0; }
+  .step .body h4 { font-size: 17px; margin-bottom: 6px; }
+  .step .body p { color: var(--muted); font-size: 14.5px; }
+
+  /* ---------- calculator ---------- */
+  .calc {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 26px; margin-top: 20px;
+  }
+  .calc label { display: block; font-size: 14px; color: var(--muted); margin: 16px 0 6px; }
+  .calc input[type=range] { width: 100%; accent-color: var(--accent); }
+  .calc select {
+    width: 100%; background: var(--bg2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; font-size: 14.5px;
+  }
+  .calc .out { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 22px; }
+  .calc .out .card { text-align: center; padding: 16px 10px; background: var(--bg2); }
+  .calc .out .card .lab { font-size: 12.5px; color: var(--muted); }
+  .calc .out .card .val { font-size: 22px; font-weight: 700; font-family: var(--mono); color: var(--accent); }
+
+  /* ---------- quant picker ---------- */
+  .quant-note { margin-top: 14px; }
+
+  /* ---------- svg diagram ---------- */
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin: 20px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+
+  footer {
+    border-top: 1px solid var(--border); padding: 40px 20px; text-align: center;
+    color: var(--muted); font-size: 13.5px;
+  }
+  footer .srcs { max-width: 760px; margin: 12px auto 0; line-height: 2; }
+
+  @media (max-width: 640px) {
+    section { padding: 40px 0; }
+    .step { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#principle">原理</a>
+  <a href="#hardware">算力主机</a>
+  <a href="#power">电力系统</a>
+  <a href="#software">软件部署</a>
+  <a href="#cost">成本与性能</a>
+  <a href="#caveats">冷静清单</a>
+</nav>
+
+<header>
+  <div class="badge">SOVEREIGN AI · 离网自建</div>
+  <h1>在自家后院<br>搭一台 <span class="grad">主权 AI 服务器</span></h1>
+  <p class="sub">Mac Studio + 太阳能 + 发电机 + GLM-5.2（744B 开源权重）。<br>不依赖电网，不依赖云 API，模型和数据 100% 在你手里。</p>
+  <div class="kit">
+    <span>🖥️ <b>Mac Studio</b> 512GB 统一内存</span>
+    <span>☀️ <b>太阳能板</b> 1.6kW 阵列</span>
+    <span>🔋 <b>储能电站</b> 3.6kWh+</span>
+    <span>⛽ <b>发电机</b> 阴雨备份</span>
+    <span>🧠 <b>GLM-5.2</b> 744B MoE</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===================== 原理 ===================== -->
+<section id="principle">
+  <h2><span class="num">01</span>原理：为什么一台 Mac 能跑 744B 模型</h2>
+  <p class="lede">先列前提，再下结论。这套方案成立依赖四条基础规则，缺一不可。</p>
+
+  <div class="grid c2">
+    <div class="card">
+      <h4>① MoE 稀疏激活</h4>
+      <p class="big">744B → 40B</p>
+      <p>GLM-5.2 是混合专家（MoE）架构：总参数 744B，但每个 token 只激活约 40B。你需要的是<b>装下全部权重的内存</b> + <b>跑得动 40B 的算力</b>，而不是 744B 稠密模型的算力。</p>
+    </div>
+    <div class="card">
+      <h4>② 统一内存</h4>
+      <p class="big">512 GB</p>
+      <p>Mac 的 CPU/GPU 共享同一块高带宽内存。NVIDIA 消费卡最大 32GB 显存装不下这类模型，而一台 Mac Studio 能给 GPU 提供 500GB 级内存。</p>
+    </div>
+    <div class="card">
+      <h4>③ 瓶颈是带宽，不是算力</h4>
+      <p class="big">819 GB/s</p>
+      <p>生成每个 token 都要把激活权重完整扫一遍。M3 Ultra 带宽约 819GB/s，普通 PC 的 DDR5 只有 ~100GB/s——所以 Mac 反而比工作站 PC 快得多。</p>
+    </div>
+    <div class="card">
+      <h4>④ 低功耗</h4>
+      <p class="big">~270 W</p>
+      <p>Mac Studio 满载仅 ~270W，家用太阳能就能养活。同等能力的 8×H200 服务器功耗 10kW+，家庭电力根本供不起——这是"后院方案"成立的另一半。</p>
+    </div>
+  </div>
+
+  <h3>整体架构</h3>
+  <div class="diagram">
+    <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC',sans-serif">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#8fa3bb"/>
+        </marker>
+      </defs>
+      <!-- solar -->
+      <rect x="30" y="40" width="180" height="90" rx="12" fill="#151e2b" stroke="#4dd39a" stroke-width="1.5"/>
+      <text x="120" y="75" text-anchor="middle" fill="#4dd39a" font-size="15" font-weight="700">☀️ 太阳能板 1.6kW</text>
+      <text x="120" y="100" text-anchor="middle" fill="#8fa3bb" font-size="12">日发电 6–8 kWh</text>
+      <!-- generator -->
+      <rect x="30" y="190" width="180" height="90" rx="12" fill="#151e2b" stroke="#ffb347" stroke-width="1.5"/>
+      <text x="120" y="225" text-anchor="middle" fill="#ffb347" font-size="15" font-weight="700">⛽ 燃油发电机</text>
+      <text x="120" y="250" text-anchor="middle" fill="#8fa3bb" font-size="12">连续阴雨天备份</text>
+      <!-- battery -->
+      <rect x="330" y="115" width="200" height="100" rx="12" fill="#151e2b" stroke="#5ab8ff" stroke-width="1.5"/>
+      <text x="430" y="150" text-anchor="middle" fill="#5ab8ff" font-size="15" font-weight="700">🔋 储能电站 3.6kWh+</text>
+      <text x="430" y="175" text-anchor="middle" fill="#8fa3bb" font-size="12">UPS + 逆变器 + 充电控制</text>
+      <text x="430" y="195" text-anchor="middle" fill="#8fa3bb" font-size="12">所有电源必经此处</text>
+      <!-- mac -->
+      <rect x="660" y="115" width="210" height="100" rx="12" fill="#151e2b" stroke="#dbe4f0" stroke-width="1.5"/>
+      <text x="765" y="148" text-anchor="middle" fill="#dbe4f0" font-size="15" font-weight="700">🖥️ Mac Studio 512GB</text>
+      <text x="765" y="172" text-anchor="middle" fill="#8fa3bb" font-size="12">GLM-5.2 4-bit 量化</text>
+      <text x="765" y="192" text-anchor="middle" fill="#4dd39a" font-size="12">llama.cpp / MLX · ~270W</text>
+      <!-- arrows -->
+      <line x1="210" y1="85" x2="330" y2="140" stroke="#8fa3bb" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="210" y1="235" x2="330" y2="185" stroke="#8fa3bb" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="530" y1="165" x2="660" y2="165" stroke="#8fa3bb" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="595" y="152" text-anchor="middle" fill="#8fa3bb" font-size="12">AC 输出</text>
+      <text x="252" y="95" fill="#8fa3bb" font-size="12">MPPT 直充</text>
+      <text x="252" y="230" fill="#8fa3bb" font-size="12">AC 快充补电</text>
+    </svg>
+  </div>
+
+  <div class="callout red">
+    <b>⚠️ 事实核查（与原推文的冲突点）</b>
+    推文里的 "Mac Studio M5 Ultra 750GB" 截至 2026 年 7 月<b>尚未正式发布</b>。爆料称 Apple 测试过最高 768GB 统一内存的 M5 Ultra，可能 2026 年底推出；"750GB" 应是对该传闻的口误或调侃（中置信度）。<b>用现售 512GB M3 Ultra 即可完整复刻本方案</b>，技术路线不受影响。
+  </div>
+</section>
+
+<!-- ===================== 硬件 ===================== -->
+<section id="hardware">
+  <h2><span class="num">02</span>算力主机：内存决定一切</h2>
+  <p class="lede">选购逻辑只有一条：统一内存必须装下「量化后的权重 + KV cache + 系统」。选择你的配置，看能跑什么。</p>
+
+  <table>
+    <thead><tr><th>配置</th><th>可用量化</th><th>权重体积</th><th>预期速度</th><th>结论</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Mac Studio 256GB</td>
+        <td>2-bit（UD-IQ2_M）</td>
+        <td>~240 GB</td>
+        <td>4–9 tok/s</td>
+        <td><span class="tag o">能跑，质量有损</span></td>
+      </tr>
+      <tr class="hl">
+        <td>Mac Studio M3 Ultra 512GB（现售）</td>
+        <td>4-bit（UD-Q4_K_XL）</td>
+        <td>~410 GB</td>
+        <td>15–20 tok/s</td>
+        <td><span class="tag g">甜点位，推荐</span></td>
+      </tr>
+      <tr>
+        <td>M5 Ultra 768GB（传闻，未发布）</td>
+        <td>4-bit + 超长上下文</td>
+        <td>~410 GB + 大 KV cache</td>
+        <td>待定</td>
+        <td><span class="tag r">等等党</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>💡 内存余量怎么算</b>
+    4-bit 权重约 410GB，512GB 机器剩下 ~100GB 给 KV cache（上下文越长吃得越多）和 macOS 系统。GLM-5.2 标称 1M 上下文，但本地实用建议开 64K–128K，KV cache 才不会爆内存。
+  </div>
+</section>
+
+<!-- ===================== 电力 ===================== -->
+<section id="power">
+  <h2><span class="num">03</span>电力系统：离网供电三件套</h2>
+  <p class="lede">核心原则：<b>Mac 永远只接储能电站，不直接接发电机</b>（发电机电压不稳）。储能电站同时充当 UPS、逆变器、充电控制器。</p>
+
+  <div class="step">
+    <div class="n">A</div>
+    <div class="body">
+      <h4>☀️ 太阳能板 —— 主力电源</h4>
+      <p>4 块 400W 板组成 1.6kW 阵列，日照良好地区每天发 6–8 kWh。通过 MPPT 接口直连储能电站，白天边发边用、盈余充入电池。</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="n">B</div>
+    <div class="body">
+      <h4>🔋 储能电站 —— 电力中枢</h4>
+      <p>EcoFlow Delta Pro 级别（3.6kWh，可扩展电池包）。Mac 接它的纯正弦波 AC 输出，断源时无缝切换，相当于自带 UPS。</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="n">C</div>
+    <div class="body">
+      <h4>⛽ 燃油发电机 —— 阴雨备份</h4>
+      <p>连续阴雨天时启动，接储能电站的 AC 快充口补电（1–2 小时充满），充完即关。它只给电池充电，不直接带载。</p>
+    </div>
+  </div>
+
+  <h3>⚡ 用电量计算器</h3>
+  <div class="calc">
+    <label>每天推理时长：<b id="hoursVal">8</b> 小时/天</label>
+    <input type="range" id="hours" min="1" max="24" value="8" oninput="calc()">
+    <label>所在地区日照条件</label>
+    <select id="sun" onchange="calc()">
+      <option value="5">☀️ 充足（等效日照 5h/天，如华北/西北）</option>
+      <option value="4" selected>🌤️ 良好（等效日照 4h/天，多数地区）</option>
+      <option value="3">☁️ 一般（等效日照 3h/天，如川渝/江南梅雨季）</option>
+    </select>
+    <div class="out">
+      <div class="card"><div class="lab">日耗电量</div><div class="val" id="kwh">—</div></div>
+      <div class="card"><div class="lab">需要 400W 板</div><div class="val" id="panels">—</div></div>
+      <div class="card"><div class="lab">建议电池容量</div><div class="val" id="batt">—</div></div>
+      <div class="card"><div class="lab">发电机使用频率</div><div class="val" id="gen">—</div></div>
+    </div>
+    <p style="color:var(--muted);font-size:12.5px;margin-top:14px">按 Mac Studio 推理 270W + 显示器 30W = 300W 估算；电池按覆盖 1.5 个阴天预留；仅为工程估算，非精确值。</p>
+  </div>
+</section>
+
+<!-- ===================== 软件 ===================== -->
+<section id="software">
+  <h2><span class="num">04</span>软件部署：四步跑起来</h2>
+  <p class="lede">以 512GB Mac Studio + 4-bit 量化为例。全程免费，最耗时的是下载 410GB 权重。</p>
+
+  <div class="step">
+    <div class="n">1</div>
+    <div class="body">
+      <h4>安装推理引擎</h4>
+      <p>两条路线二选一：llama.cpp（生态最全）或 MLX（Apple 官方框架，Mac 上通常略快）。图形界面党可直接装 LM Studio，跳过所有命令行。</p>
+      <div class="codeblock">
+        <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+        <pre><span class="cmt"># 路线 A：llama.cpp</span>
+brew install llama.cpp
+
+<span class="cmt"># 路线 B：MLX（Apple 官方）</span>
+pip install mlx-lm</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">2</div>
+    <div class="body">
+      <h4>下载 GLM-5.2 量化权重（~410GB，需数小时）</h4>
+      <div class="codeblock">
+        <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+        <pre>pip install huggingface_hub
+
+<span class="cmt"># 512GB 机器 → 4-bit（甜点位）</span>
+hf download unsloth/GLM-5.2-GGUF --include "*UD-Q4_K_XL*" --local-dir ./glm-5.2
+
+<span class="cmt"># 256GB 机器 → 改用 2-bit：--include "*UD-IQ2_M*"</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">3</div>
+    <div class="body">
+      <h4>放开 GPU 内存上限（关键一步）</h4>
+      <p>macOS 默认只允许 GPU 使用约 75% 的统一内存，跑大模型必须调高：</p>
+      <div class="codeblock">
+        <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+        <pre><span class="cmt"># 给 GPU 分配 ~480GB（512GB 机器；重启后失效，可写入 LaunchDaemon 持久化）</span>
+sudo sysctl iogpu.wired_limit_mb=480000</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">4</div>
+    <div class="body">
+      <h4>启动本地 API 服务</h4>
+      <p>启动后暴露 OpenAI 兼容接口 <code style="font-family:var(--mono);color:var(--accent)">http://localhost:8080/v1</code>，可接 Open WebUI 聊天界面，或通过启动器接入 Claude Code 等编程工具。</p>
+      <div class="codeblock">
+        <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+        <pre>llama-server -m ./glm-5.2/GLM-5.2-UD-Q4_K_XL-00001-of-*.gguf \
+  --ctx-size 65536 --n-gpu-layers 999 --port 8080 --jinja</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <b>✅ 验证部署成功</b>
+    <code style="font-family:var(--mono)">curl http://localhost:8080/v1/models</code> 返回模型列表即成功。首次加载权重进内存需要几分钟，属正常现象。
+  </div>
+</section>
+
+<!-- ===================== 成本 ===================== -->
+<section id="cost">
+  <h2><span class="num">05</span>成本与性能：本地 vs 云端</h2>
+  <p class="lede">先说结论：这套方案<b>不是为了省钱</b>，是为了隐私、离网和不依赖任何厂商。</p>
+
+  <table>
+    <thead><tr><th>项目</th><th>后院主权方案</th><th>云端 API</th></tr></thead>
+    <tbody>
+      <tr><td>一次性投入</td><td>¥8–15 万（Mac + 电力系统）</td><td>0</td></tr>
+      <tr><td>月度成本</td><td>≈ 0（太阳能 + 少量汽油）</td><td>$3–30/月（GLM coding plan）</td></tr>
+      <tr><td>生成速度</td><td>15–20 tok/s（4-bit）</td><td>60–100+ tok/s</td></tr>
+      <tr><td>模型质量</td><td>4-bit 量化，接近原版</td><td>原版 FP8</td></tr>
+      <tr><td>隐私</td><td><span class="tag g">数据不出家门</span></td><td><span class="tag o">经第三方服务器</span></td></tr>
+      <tr><td>断网/断电可用</td><td><span class="tag g">完全可用</span></td><td><span class="tag r">不可用</span></td></tr>
+      <tr><td>厂商依赖</td><td><span class="tag g">零依赖，权重永久持有</span></td><td><span class="tag r">API 可涨价/停服/审查</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid c2">
+    <div class="card">
+      <h4>预算明细（人民币，估算）</h4>
+      <p>🖥️ Mac Studio 512GB：¥6–8 万<br>
+      ☀️ 太阳能板 4×400W：¥3,000–5,000<br>
+      🔋 储能电站 3.6kWh：¥15,000–25,000<br>
+      ⛽ 便携发电机：¥3,000–8,000<br>
+      🔌 线缆支架杂项：¥1,000–2,000</p>
+    </div>
+    <div class="card">
+      <h4>什么人适合这套方案</h4>
+      <p>✅ 处理敏感数据（法律/医疗/商业机密）<br>
+      ✅ 离网/偏远地区/电网不稳定<br>
+      ✅ 重度使用者，长期摊薄成本<br>
+      ✅ 就是想要「完全属于自己的 AI」<br>
+      ❌ 只是偶尔用用 → 直接买 API</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 冷静清单 ===================== -->
+<section id="caveats">
+  <h2><span class="num">06</span>冷静清单：自我反驳一次</h2>
+  <p class="lede">重要决策前，主动反驳自己的结论。以下每一条都可能推翻"值得搭"的判断。</p>
+
+  <div class="grid c2">
+    <div class="card">
+      <h4>反驳 ①：经济账不成立</h4>
+      <p>¥8–15 万一次性投入 + 15–20 tok/s，纯算性价比远不如 $30/月的官方 API（速度还快 3–5 倍）。<b>前提是你需要隐私/离网</b>——前提不成立，结论无效。</p>
+    </div>
+    <div class="card">
+      <h4>反驳 ②：量化质量损失</h4>
+      <p>2-bit 量化在复杂编码任务上的质量损失可感知。"本地 GLM-5.2 ≈ 云端 GLM-5.2" 只在 4-bit 以上近似成立，256GB 机器请降低预期。</p>
+    </div>
+    <div class="card">
+      <h4>反驳 ③：M5 Ultra 是期货</h4>
+      <p>推文中的 750GB 配置不存在（当前爆料上限 768GB 且未发布）。等新品可能等到 2026 年底，且内存涨价潮下售价未知。</p>
+    </div>
+    <div class="card">
+      <h4>反驳 ④：运维不是零成本</h4>
+      <p>太阳能板要清洁、电池冬天衰减、发电机要保养加油。"零月费"指电费，不含你的时间成本。</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div>基于 2026-07 公开资料整理 · 数据来源：</div>
+  <div class="srcs">
+    <a href="https://unsloth.ai/docs/models/glm-5.2" target="_blank">Unsloth: GLM-5.2 本地运行文档</a> ·
+    <a href="https://ofox.ai/blog/glm-5-2-run-locally-gguf-2026/" target="_blank">ofox: 256GB Mac 跑 GLM-5.2</a> ·
+    <a href="https://codersera.com/blog/how-to-run-glm-5-2-locally-2026/" target="_blank">codersera: 硬件与量化指南</a> ·
+    <a href="https://particula.tech/blog/how-to-run-glm-5-2-locally" target="_blank">particula: GLM-5.2 部署</a> ·
+    <a href="https://www.macworld.com/article/2973459/2026-mac-studio-m5-release-date-specs-price-rumors.html" target="_blank">Macworld: M5 Mac Studio 传闻</a> ·
+    <a href="https://forums.macrumors.com/threads/m5-ultra-mac-studio-could-launch-in-2026-with-up-to-768gb-of-ram.2484565/" target="_blank">MacRumors: M5 Ultra 768GB</a>
+  </div>
+  <div style="margin-top:16px">AiCogni · diy-mac-glm</div>
+</footer>
+
+<script>
+function calc() {
+  var h = +document.getElementById('hours').value;
+  var sun = +document.getElementById('sun').value;
+  document.getElementById('hoursVal').textContent = h;
+  var kwh = h * 0.3;                          // 300W load
+  var panels = Math.max(1, Math.ceil(kwh / (0.4 * sun * 0.8)));  // 400W panel, 80% system efficiency
+  var batt = Math.ceil(kwh * 1.5 * 10) / 10;  // cover 1.5 cloudy days
+  var genFreq = sun >= 5 ? '很少' : (sun >= 4 ? '偶尔' : '每周补电');
+  document.getElementById('kwh').textContent = kwh.toFixed(1) + ' kWh';
+  document.getElementById('panels').textContent = panels + ' 块';
+  document.getElementById('batt').textContent = batt.toFixed(1) + ' kWh';
+  document.getElementById('gen').textContent = genFreq;
+}
+calc();
+
+function copyCode(btn) {
+  var pre = btn.closest('.codeblock').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(function () {
+    btn.textContent = '✓ 已复制';
+    setTimeout(function () { btn.textContent = '复制'; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
