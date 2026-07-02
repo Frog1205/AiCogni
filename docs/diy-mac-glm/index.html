@@ -35,11 +35,12 @@
     position: sticky; top: 0; z-index: 100;
     background: rgba(11,15,20,.9); backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
-    display: flex; gap: 4px; padding: 10px 16px; overflow-x: auto;
-    justify-content: center;
+    display: flex; gap: 2px; padding: 10px 16px; overflow-x: auto;
+    justify-content: flex-start;
   }
+  @media (min-width: 900px) { nav { justify-content: center; } }
   nav a {
-    color: var(--muted); font-size: 14px; padding: 6px 14px;
+    color: var(--muted); font-size: 13.5px; padding: 6px 12px;
     border-radius: 20px; white-space: nowrap;
   }
   nav a:hover { color: var(--text); background: var(--card); text-decoration: none; }
@@ -139,9 +140,25 @@
     color: #08131c; font-weight: 800; font-size: 18px;
     display: flex; align-items: center; justify-content: center;
   }
+  .step.orange .n { background: linear-gradient(135deg, var(--accent2), #ff8c66); }
   .step .body { flex: 1; min-width: 0; }
   .step .body h4 { font-size: 17px; margin-bottom: 6px; }
   .step .body p { color: var(--muted); font-size: 14.5px; }
+  .step .body ul { color: var(--muted); font-size: 14.5px; padding-left: 20px; margin-top: 6px; }
+  .step .body li { margin: 4px 0; }
+  .step .body li b { color: var(--text); }
+
+  /* ---------- pitfall cards ---------- */
+  .pit {
+    background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--danger);
+    border-radius: 12px; padding: 16px 20px; margin: 12px 0;
+  }
+  .pit h4 { font-size: 15.5px; margin-bottom: 6px; }
+  .pit h4 .pn { color: var(--danger); font-family: var(--mono); margin-right: 8px; }
+  .pit p { font-size: 14px; color: var(--muted); }
+  .pit .fix { color: var(--accent); font-size: 14px; margin-top: 6px; }
+  .pit .fix::before { content: "✔ 解法："; font-weight: 700; }
+  .pit code { font-family: var(--mono); font-size: 13px; color: var(--accent3); background: var(--bg2); padding: 1px 6px; border-radius: 5px; }
 
   /* ---------- calculator ---------- */
   .calc {
@@ -159,12 +176,50 @@
   .calc .out .card .lab { font-size: 12.5px; color: var(--muted); }
   .calc .out .card .val { font-size: 22px; font-weight: 700; font-family: var(--mono); color: var(--accent); }
 
-  /* ---------- quant picker ---------- */
-  .quant-note { margin-top: 14px; }
-
-  /* ---------- svg diagram ---------- */
+  /* ---------- dynamic diagram ---------- */
   .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin: 20px 0; }
   .diagram svg { width: 100%; height: auto; display: block; }
+
+  .diag-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+  .diag-controls .play {
+    background: linear-gradient(135deg, var(--accent), var(--accent3)); color: #08131c;
+    border: none; border-radius: 10px; padding: 9px 20px; font-size: 14.5px; font-weight: 700; cursor: pointer;
+  }
+  .diag-controls .play:hover { filter: brightness(1.1); }
+  .stepchips { display: flex; gap: 6px; }
+  .stepchips button {
+    background: var(--bg2); color: var(--muted); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 13px; font-size: 13.5px; cursor: pointer;
+  }
+  .stepchips button.on { color: #08131c; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+  .scen { display: flex; gap: 0; margin-left: auto; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .scen button {
+    background: var(--bg2); color: var(--muted); border: none; padding: 8px 14px;
+    font-size: 13.5px; cursor: pointer; border-right: 1px solid var(--border);
+  }
+  .scen button:last-child { border-right: none; }
+  .scen button.on { background: var(--card2); color: var(--text); font-weight: 700; }
+
+  .diag-desc {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 18px; margin-top: 14px; min-height: 78px; font-size: 14.5px;
+  }
+  .diag-desc b { color: var(--accent); display: block; margin-bottom: 2px; }
+  .diag-desc span { color: var(--muted); }
+
+  /* svg component states */
+  .comp { opacity: .12; transition: opacity .7s ease, filter .7s ease; }
+  .comp.on { opacity: 1; }
+  .comp.dimmed { opacity: .3; }
+  .flowline { opacity: .12; transition: opacity .5s ease; }
+  .flowline.active { opacity: 1; stroke-dasharray: 9 9; animation: dashmove 0.9s linear infinite; }
+  .flowline.idle { opacity: .35; stroke-dasharray: none; animation: none; }
+  @keyframes dashmove { to { stroke-dashoffset: -18; } }
+  .arrhead { opacity: .12; transition: opacity .5s ease; }
+  .arrhead.show { opacity: 1; }
+  .flowlabel { opacity: 0; transition: opacity .5s ease; }
+  .flowlabel.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .flowline.active { animation: none; } }
 
   footer {
     border-top: 1px solid var(--border); padding: 40px 20px; text-align: center;
@@ -175,6 +230,7 @@
   @media (max-width: 640px) {
     section { padding: 40px 0; }
     .step { gap: 12px; }
+    .scen { margin-left: 0; }
   }
 </style>
 </head>
@@ -184,8 +240,11 @@
   <a href="#principle">原理</a>
   <a href="#hardware">算力主机</a>
   <a href="#power">电力系统</a>
+  <a href="#solar">太阳能安装</a>
+  <a href="#battery">储能电站</a>
   <a href="#software">软件部署</a>
-  <a href="#cost">成本与性能</a>
+  <a href="#pitfalls">避坑指南</a>
+  <a href="#cost">成本性能</a>
   <a href="#caveats">冷静清单</a>
 </nav>
 
@@ -232,40 +291,67 @@
     </div>
   </div>
 
-  <h3>整体架构</h3>
+  <h3>动态拆解：这套系统怎么组起来</h3>
   <div class="diagram">
+    <div class="diag-controls">
+      <button class="play" id="playBtn" onclick="playAssembly()">▶ 播放拆解</button>
+      <div class="stepchips" id="stepChips">
+        <button onclick="setStep(1)">1 太阳能</button>
+        <button onclick="setStep(2)">2 储能</button>
+        <button onclick="setStep(3)">3 发电机</button>
+        <button onclick="setStep(4)">4 Mac</button>
+      </div>
+      <div class="scen" id="scenBtns">
+        <button onclick="setScenario('day')" data-s="day">☀️ 晴天</button>
+        <button onclick="setScenario('night')" data-s="night">🌙 夜间</button>
+        <button onclick="setScenario('rain')" data-s="rain">🌧️ 连续阴雨</button>
+      </div>
+    </div>
+
     <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC',sans-serif">
-      <defs>
-        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="#8fa3bb"/>
-        </marker>
-      </defs>
+      <!-- flow lines (behind components) -->
+      <line id="line-solar" class="flowline" x1="210" y1="85"  x2="330" y2="140" stroke="#4dd39a" stroke-width="2.5"/>
+      <line id="line-gen"   class="flowline" x1="210" y1="235" x2="330" y2="185" stroke="#ffb347" stroke-width="2.5"/>
+      <line id="line-ac"    class="flowline" x1="530" y1="165" x2="660" y2="165" stroke="#5ab8ff" stroke-width="2.5"/>
+      <polygon id="arr-solar" class="arrhead" points="330,140 318,136 322,146" fill="#4dd39a"/>
+      <polygon id="arr-gen"   class="arrhead" points="330,185 318,189 322,179" fill="#ffb347"/>
+      <polygon id="arr-ac"    class="arrhead" points="660,165 648,160 648,170" fill="#5ab8ff"/>
+      <text id="lab-solar" class="flowlabel" x="248" y="95"  fill="#8fa3bb" font-size="12">MPPT 直充</text>
+      <text id="lab-gen"   class="flowlabel" x="248" y="230" fill="#8fa3bb" font-size="12">AC 快充补电</text>
+      <text id="lab-ac"    class="flowlabel" x="595" y="152" text-anchor="middle" fill="#8fa3bb" font-size="12">纯正弦波 AC</text>
+
       <!-- solar -->
-      <rect x="30" y="40" width="180" height="90" rx="12" fill="#151e2b" stroke="#4dd39a" stroke-width="1.5"/>
-      <text x="120" y="75" text-anchor="middle" fill="#4dd39a" font-size="15" font-weight="700">☀️ 太阳能板 1.6kW</text>
-      <text x="120" y="100" text-anchor="middle" fill="#8fa3bb" font-size="12">日发电 6–8 kWh</text>
+      <g id="comp-solar" class="comp">
+        <rect x="30" y="40" width="180" height="90" rx="12" fill="#151e2b" stroke="#4dd39a" stroke-width="1.5"/>
+        <text x="120" y="75" text-anchor="middle" fill="#4dd39a" font-size="15" font-weight="700">☀️ 太阳能板 1.6kW</text>
+        <text id="txt-solar" x="120" y="100" text-anchor="middle" fill="#8fa3bb" font-size="12">日发电 6–8 kWh</text>
+      </g>
       <!-- generator -->
-      <rect x="30" y="190" width="180" height="90" rx="12" fill="#151e2b" stroke="#ffb347" stroke-width="1.5"/>
-      <text x="120" y="225" text-anchor="middle" fill="#ffb347" font-size="15" font-weight="700">⛽ 燃油发电机</text>
-      <text x="120" y="250" text-anchor="middle" fill="#8fa3bb" font-size="12">连续阴雨天备份</text>
+      <g id="comp-gen" class="comp">
+        <rect x="30" y="190" width="180" height="90" rx="12" fill="#151e2b" stroke="#ffb347" stroke-width="1.5"/>
+        <text x="120" y="225" text-anchor="middle" fill="#ffb347" font-size="15" font-weight="700">⛽ 燃油发电机</text>
+        <text id="txt-gen" x="120" y="250" text-anchor="middle" fill="#8fa3bb" font-size="12">连续阴雨天备份</text>
+      </g>
       <!-- battery -->
-      <rect x="330" y="115" width="200" height="100" rx="12" fill="#151e2b" stroke="#5ab8ff" stroke-width="1.5"/>
-      <text x="430" y="150" text-anchor="middle" fill="#5ab8ff" font-size="15" font-weight="700">🔋 储能电站 3.6kWh+</text>
-      <text x="430" y="175" text-anchor="middle" fill="#8fa3bb" font-size="12">UPS + 逆变器 + 充电控制</text>
-      <text x="430" y="195" text-anchor="middle" fill="#8fa3bb" font-size="12">所有电源必经此处</text>
+      <g id="comp-batt" class="comp">
+        <rect x="330" y="115" width="200" height="100" rx="12" fill="#151e2b" stroke="#5ab8ff" stroke-width="1.5"/>
+        <text x="430" y="150" text-anchor="middle" fill="#5ab8ff" font-size="15" font-weight="700">🔋 储能电站 3.6kWh+</text>
+        <text x="430" y="175" text-anchor="middle" fill="#8fa3bb" font-size="12">UPS + 逆变器 + 充电控制</text>
+        <text id="txt-batt" x="430" y="195" text-anchor="middle" fill="#8fa3bb" font-size="12">所有电源必经此处</text>
+      </g>
       <!-- mac -->
-      <rect x="660" y="115" width="210" height="100" rx="12" fill="#151e2b" stroke="#dbe4f0" stroke-width="1.5"/>
-      <text x="765" y="148" text-anchor="middle" fill="#dbe4f0" font-size="15" font-weight="700">🖥️ Mac Studio 512GB</text>
-      <text x="765" y="172" text-anchor="middle" fill="#8fa3bb" font-size="12">GLM-5.2 4-bit 量化</text>
-      <text x="765" y="192" text-anchor="middle" fill="#4dd39a" font-size="12">llama.cpp / MLX · ~270W</text>
-      <!-- arrows -->
-      <line x1="210" y1="85" x2="330" y2="140" stroke="#8fa3bb" stroke-width="2" marker-end="url(#arr)"/>
-      <line x1="210" y1="235" x2="330" y2="185" stroke="#8fa3bb" stroke-width="2" marker-end="url(#arr)"/>
-      <line x1="530" y1="165" x2="660" y2="165" stroke="#8fa3bb" stroke-width="2" marker-end="url(#arr)"/>
-      <text x="595" y="152" text-anchor="middle" fill="#8fa3bb" font-size="12">AC 输出</text>
-      <text x="252" y="95" fill="#8fa3bb" font-size="12">MPPT 直充</text>
-      <text x="252" y="230" fill="#8fa3bb" font-size="12">AC 快充补电</text>
+      <g id="comp-mac" class="comp">
+        <rect x="660" y="115" width="210" height="100" rx="12" fill="#151e2b" stroke="#dbe4f0" stroke-width="1.5"/>
+        <text x="765" y="148" text-anchor="middle" fill="#dbe4f0" font-size="15" font-weight="700">🖥️ Mac Studio 512GB</text>
+        <text x="765" y="172" text-anchor="middle" fill="#8fa3bb" font-size="12">GLM-5.2 4-bit 量化</text>
+        <text x="765" y="192" text-anchor="middle" fill="#4dd39a" font-size="12">llama.cpp / MLX · ~270W</text>
+      </g>
     </svg>
+
+    <div class="diag-desc" id="diagDesc">
+      <b>准备开始</b>
+      <span>点击「播放拆解」逐件搭建系统；或点右上角场景按钮，看晴天 / 夜间 / 阴雨三种模式下电流怎么走。</span>
+    </div>
   </div>
 
   <div class="callout red">
@@ -312,32 +398,10 @@
   </div>
 </section>
 
-<!-- ===================== 电力 ===================== -->
+<!-- ===================== 电力总览 ===================== -->
 <section id="power">
-  <h2><span class="num">03</span>电力系统：离网供电三件套</h2>
-  <p class="lede">核心原则：<b>Mac 永远只接储能电站，不直接接发电机</b>（发电机电压不稳）。储能电站同时充当 UPS、逆变器、充电控制器。</p>
-
-  <div class="step">
-    <div class="n">A</div>
-    <div class="body">
-      <h4>☀️ 太阳能板 —— 主力电源</h4>
-      <p>4 块 400W 板组成 1.6kW 阵列，日照良好地区每天发 6–8 kWh。通过 MPPT 接口直连储能电站，白天边发边用、盈余充入电池。</p>
-    </div>
-  </div>
-  <div class="step">
-    <div class="n">B</div>
-    <div class="body">
-      <h4>🔋 储能电站 —— 电力中枢</h4>
-      <p>EcoFlow Delta Pro 级别（3.6kWh，可扩展电池包）。Mac 接它的纯正弦波 AC 输出，断源时无缝切换，相当于自带 UPS。</p>
-    </div>
-  </div>
-  <div class="step">
-    <div class="n">C</div>
-    <div class="body">
-      <h4>⛽ 燃油发电机 —— 阴雨备份</h4>
-      <p>连续阴雨天时启动，接储能电站的 AC 快充口补电（1–2 小时充满），充完即关。它只给电池充电，不直接带载。</p>
-    </div>
-  </div>
+  <h2><span class="num">03</span>电力系统总览</h2>
+  <p class="lede">核心原则：<b>Mac 永远只接储能电站，不直接接发电机</b>（发电机电压不稳）。储能电站同时充当 UPS、逆变器、充电控制器。先用计算器算出你需要多大的系统，再往下看零基础安装。</p>
 
   <h3>⚡ 用电量计算器</h3>
   <div class="calc">
@@ -352,10 +416,158 @@
     <div class="out">
       <div class="card"><div class="lab">日耗电量</div><div class="val" id="kwh">—</div></div>
       <div class="card"><div class="lab">需要 400W 板</div><div class="val" id="panels">—</div></div>
-      <div class="card"><div class="lab">建议电池容量</div><div class="val" id="batt">—</div></div>
-      <div class="card"><div class="lab">发电机使用频率</div><div class="val" id="gen">—</div></div>
+      <div class="card"><div class="lab">建议电池容量</div><div class="val" id="batt2">—</div></div>
+      <div class="card"><div class="lab">发电机使用频率</div><div class="val" id="gen2">—</div></div>
     </div>
     <p style="color:var(--muted);font-size:12.5px;margin-top:14px">按 Mac Studio 推理 270W + 显示器 30W = 300W 估算；电池按覆盖 1.5 个阴天预留；仅为工程估算，非精确值。</p>
+  </div>
+</section>
+
+<!-- ===================== 太阳能零基础 ===================== -->
+<section id="solar">
+  <h2><span class="num">3A</span>太阳能板：零基础安装</h2>
+  <p class="lede">从没装过太阳能板？不需要电工证，配合储能电站的方案是「插头级」难度——但接线顺序和电压计算不能错。工具只需要一个万用表（¥50 左右）。</p>
+
+  <div class="step">
+    <div class="n">1</div>
+    <div class="body">
+      <h4>选板前先看储能电站的输入参数</h4>
+      <p>翻电站说明书找 <b>PV 输入范围</b>，例如「11–150V ⎓ / 15A / 最大 1600W」。这三个数决定你能接什么板、怎么接。板子有两种：</p>
+      <ul>
+        <li><b>硬质玻璃板</b>（400W 约 ¥700）：便宜、耐用 25 年，但重 22kg，要支架</li>
+        <li><b>便携折叠板</b>（400W 约 ¥2,000）：自带支腿、拎起就走，适合先试水</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">2</div>
+    <div class="body">
+      <h4>算电压——这一步烧机器，必须做</h4>
+      <p>板子背面标签有两个关键数：<b>开路电压 Voc</b>（如 49V）和<b>工作电流 Imp</b>（如 10A）。接法只有两种：</p>
+      <ul>
+        <li><b>串联</b>（一块板的公头插下一块的母头）：电压相加，电流不变。4 块 49V 串联 = 196V，<b>超过 150V 上限 → 烧毁电站输入口</b></li>
+        <li><b>并联</b>（用 Y 型分流器）：电流相加，电压不变。电流别超电站上限</li>
+        <li>4 块板通常的安全解：<b>2 串 2 并</b> = 98V / 20A ？电流超了就 <b>2 组分接两个输入口</b>，或全并联</li>
+      </ul>
+      <p style="margin-top:6px">⚠️ 低温时 Voc 会升高 10%+，冬天早晨最容易超压。按「Voc × 板数 × 1.15 &lt; 电站上限」留余量。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">3</div>
+    <div class="body">
+      <h4>摆放：朝南、倾角≈纬度、全天无阴影</h4>
+      <ul>
+        <li>北半球一律<b>朝正南</b>，倾角约等于当地纬度（北京 40°，广州 23°）</li>
+        <li><b>阴影是隐形杀手</b>：一块板 5% 面积被树枝/电线杆阴影盖住，整串输出可能掉一半以上。早中晚各看一次影子再定位置</li>
+        <li>硬质板用铝支架固定或水泥砖压载，考虑台风天</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">4</div>
+    <div class="body">
+      <h4>接线顺序：板→板→电站，拆时反过来</h4>
+      <p>板子只要见光就带电压，顺序错了会拉电弧：</p>
+      <ul>
+        <li>① 先把板子之间的 MC4 公母头对插（咔哒一声锁死）</li>
+        <li>② 用万用表量总输出：电压极性正确、数值在预期范围</li>
+        <li>③ 最后才把 MC4→XT60/XT90 转接线插进电站 PV 输入口</li>
+        <li>④ 看电站屏幕显示输入功率（晴天正午应接近标称的 70–85%）——有数字就是成功了</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>太阳能板常见坑</h3>
+  <div class="pit">
+    <h4><span class="pn">坑</span>串联超压烧输入口</h4>
+    <p>最常见的新手事故：只看功率不看电压，4 块板全串联直接超 MPPT 上限，电站 PV 口当场烧毁，不在保修范围。</p>
+    <p class="fix">先算 Voc × 板数 × 1.15，小于电站上限才能串。</p>
+  </div>
+  <div class="pit">
+    <h4><span class="pn">坑</span>局部阴影毁全串</h4>
+    <p>串联的板子像水管，一处堵全线堵。实测输出只有标称三成时，八成是某块板被阴影切了。</p>
+    <p class="fix">选址时早中晚各看一次影子；躲不开就改并联（一块被遮不拖累其他）。</p>
+  </div>
+  <div class="pit">
+    <h4><span class="pn">坑</span>劣质 Y 型分流器过热</h4>
+    <p>并联电流大，几块钱的分流器铜芯太细，夏天正午会烫到融化外皮。</p>
+    <p class="fix">买标称 30A 以上、带 4mm² 线径的正规 MC4 分流器。</p>
+  </div>
+  <div class="pit">
+    <h4><span class="pn">坑</span>指望阴天也能满发</h4>
+    <p>阴天输出只有标称的 5–15%，1.6kW 阵列阴天可能只有 150W——刚够 Mac 待机。</p>
+    <p class="fix">这就是发电机存在的意义，别砍这个预算。</p>
+  </div>
+</section>
+
+<!-- ===================== 储能电站零基础 ===================== -->
+<section id="battery">
+  <h2><span class="num">3B</span>储能电站：怎么选、怎么配</h2>
+  <p class="lede">储能电站（Power Station）是整套系统的心脏：太阳能和发电机的电都先进它，Mac 只从它取电。它不用"搭建"——买对参数、设对模式就行。</p>
+
+  <div class="step orange">
+    <div class="n">1</div>
+    <div class="body">
+      <h4>容量选型：日耗电 × 1.5</h4>
+      <p>用上面计算器的结果乘 1.5（覆盖一个半阴天）。每天用 8 小时 ≈ 2.4kWh → 选 3.6kWh 级别（如 EcoFlow Delta Pro / 华宝 / 正浩同级），支持后续加装扩展电池包。</p>
+    </div>
+  </div>
+
+  <div class="step orange">
+    <div class="n">2</div>
+    <div class="body">
+      <h4>必查的四个参数（缺一个就换型号）</h4>
+      <ul>
+        <li><b>纯正弦波输出</b>：修正弦波（modified sine wave）长期喂 Mac 电源会缩短其寿命，必须是 Pure Sine Wave</li>
+        <li><b>UPS 切换时间 &lt; 20ms</b>：断源瞬间无缝切电池，Mac 不重启</li>
+        <li><b>PV 输入上限 ≥ 1600W</b>：否则太阳能板发得再多也进不去</li>
+        <li><b>AC 输出持续功率 ≥ 1000W</b>：Mac 300W 用不满，但余量意味着逆变器长期低负载低发热</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step orange">
+    <div class="n">3</div>
+    <div class="body">
+      <h4>初次设置：进 App 改三个开关</h4>
+      <ul>
+        <li><b>关闭「无负载自动关机」（Eco/待机超时）</b>——最重要的一步，见下方坑 ①</li>
+        <li>充电上限设 <b>85%</b>、放电下限 <b>15%</b>：锂电循环寿命翻倍（出远门满充没问题）</li>
+        <li>AC 充电速度调「静音/慢充」：发电机补电时更稳</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step orange">
+    <div class="n">4</div>
+    <div class="body">
+      <h4>摆放与季节注意</h4>
+      <ul>
+        <li>通风、防雨、避免暴晒；线缆从下方进出防积水</li>
+        <li><b>锂电池 0°C 以下不能充电</b>（放电可以）：冬天电站要放室内或保温箱，只把板子留在外面</li>
+        <li>发电机补电流程：接 AC 快充口 → 充到 80% → 关机。发电机只喂电站，永远不直接带 Mac</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>储能电站常见坑</h3>
+  <div class="pit">
+    <h4><span class="pn">坑①</span>Eco 模式半夜给你断电</h4>
+    <p>电站检测到负载低于阈值（如 &lt;50W）会认为"没人用"自动关 AC 输出。Mac 夜间待机功耗很低，正好踩中——早上起来发现 Mac 被硬断电，模型得重新加载 10 分钟。</p>
+    <p class="fix">App 里关闭 Eco/无负载关机；关不掉的型号，接一个 60W 小负载骗过检测（不推荐，费电）。</p>
+  </div>
+  <div class="pit">
+    <h4><span class="pn">坑②</span>标称容量 ≠ 可用容量</h4>
+    <p>3.6kWh 标称，逆变损耗 ~12% + 保留下限 15%，实际可用约 2.6kWh。按标称算续航会短 30%。</p>
+    <p class="fix">容量规划一律按标称 × 0.72 折算。</p>
+  </div>
+  <div class="pit">
+    <h4><span class="pn">坑③</span>发电机直连 Mac</h4>
+    <p>便携发电机空载/加载瞬间电压波动大，直接带 Mac 等于拿电源赌博。</p>
+    <p class="fix">发电机只接电站快充口，电站永远是中间人。图省事跳过这一层，坏的是 6 万块的 Mac。</p>
   </div>
 </section>
 
@@ -371,7 +583,7 @@
       <p>两条路线二选一：llama.cpp（生态最全）或 MLX（Apple 官方框架，Mac 上通常略快）。图形界面党可直接装 LM Studio，跳过所有命令行。</p>
       <div class="codeblock">
         <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-        <pre><span class="cmt"># 路线 A：llama.cpp</span>
+        <pre><span class="cmt"># 路线 A：llama.cpp（务必装最新版，旧版不认 GLM-5.2 架构）</span>
 brew install llama.cpp
 
 <span class="cmt"># 路线 B：MLX（Apple 官方）</span>
@@ -386,7 +598,8 @@ pip install mlx-lm</pre>
       <h4>下载 GLM-5.2 量化权重（~410GB，需数小时）</h4>
       <div class="codeblock">
         <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-        <pre>pip install huggingface_hub
+        <pre>pip install huggingface_hub hf_transfer
+export HF_HUB_ENABLE_HF_TRANSFER=1   <span class="cmt"># 大文件提速，且支持断点续传</span>
 
 <span class="cmt"># 512GB 机器 → 4-bit（甜点位）</span>
 hf download unsloth/GLM-5.2-GGUF --include "*UD-Q4_K_XL*" --local-dir ./glm-5.2
@@ -403,7 +616,7 @@ hf download unsloth/GLM-5.2-GGUF --include "*UD-Q4_K_XL*" --local-dir ./glm-5.2
       <p>macOS 默认只允许 GPU 使用约 75% 的统一内存，跑大模型必须调高：</p>
       <div class="codeblock">
         <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-        <pre><span class="cmt"># 给 GPU 分配 ~480GB（512GB 机器；重启后失效，可写入 LaunchDaemon 持久化）</span>
+        <pre><span class="cmt"># 给 GPU 分配 ~480GB（512GB 机器）。注意：重启后失效！见避坑指南 ①</span>
 sudo sysctl iogpu.wired_limit_mb=480000</pre>
       </div>
     </div>
@@ -416,7 +629,8 @@ sudo sysctl iogpu.wired_limit_mb=480000</pre>
       <p>启动后暴露 OpenAI 兼容接口 <code style="font-family:var(--mono);color:var(--accent)">http://localhost:8080/v1</code>，可接 Open WebUI 聊天界面，或通过启动器接入 Claude Code 等编程工具。</p>
       <div class="codeblock">
         <div class="cb-head"><span>terminal</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
-        <pre>llama-server -m ./glm-5.2/GLM-5.2-UD-Q4_K_XL-00001-of-*.gguf \
+        <pre><span class="cmt"># caffeinate 防止 macOS 休眠杀掉服务；-m 只指向第一个分片</span>
+caffeinate -s llama-server -m ./glm-5.2/GLM-5.2-UD-Q4_K_XL-00001-of-00009.gguf \
   --ctx-size 65536 --n-gpu-layers 999 --port 8080 --jinja</pre>
       </div>
     </div>
@@ -428,9 +642,68 @@ sudo sysctl iogpu.wired_limit_mb=480000</pre>
   </div>
 </section>
 
+<!-- ===================== 避坑指南 ===================== -->
+<section id="pitfalls">
+  <h2><span class="num">05</span>GLM-5.2 部署避坑指南</h2>
+  <p class="lede">以下全部来自社区真实踩坑记录（Unsloth 文档、llama.cpp 讨论区、自托管实测），按踩中概率排序。</p>
+
+  <div class="pit">
+    <h4><span class="pn">坑①</span>重启后模型加载不进 GPU / 直接 OOM</h4>
+    <p><code>iogpu.wired_limit_mb</code> 是易失设置，<b>重启后自动失效</b>，回到默认 75% 上限。410GB 的权重塞不进 384GB 配额，加载报错或跌进龟速 swap。</p>
+    <p class="fix">写一个 LaunchDaemon 开机自动执行 sysctl，或把它加进启动脚本；每次重启后先确认再拉起服务。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑②</span>首 token 等几分钟——Mac 的先天短板</h4>
+    <p>Mac 的<b>提示词处理（prefill）是算力瓶颈</b>而非带宽瓶颈，GPU 算力远弱于 NVIDIA。生成 15–20 tok/s 很舒服，但塞一个 50K token 的代码库上下文，首 token 可能要等 5–10 分钟。这是硬件特性，无解。</p>
+    <p class="fix">开 <code>--cache-reuse 256</code> 复用 KV cache；agent 场景保持长会话而不是每次重发全量上下文；把"喂大仓库"改成"喂相关文件"。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑③</span>第二个人一起用，速度腰斩</h4>
+    <p>消费级硬件没有多余带宽可分。本地 GLM-5.2 是<b>单流、单人工具</b>——两个 agent 同时打同一个 llama-server，两边都慢到没法用。没有任何 flag 能解决。</p>
+    <p class="fix">接受它是单人工作站；多人需求老实上云或攒多机集群。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑④</span>llama.cpp 版本太旧，报 unknown architecture</h4>
+    <p>GLM-5.2 架构较新，几个月前装的 llama.cpp 直接不认识模型文件。</p>
+    <p class="fix"><code>brew upgrade llama.cpp</code> 到最新；LM Studio 用户升级 runtime。下载权重前先确认引擎支持，别反过来。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑⑤</span>忘加 --jinja，工具调用全乱</h4>
+    <p>不加 <code>--jinja</code> 时 llama.cpp 用默认聊天模板，GLM-5.2 的工具调用（tool calls）和思维链格式全部错乱，接 Claude Code / agent 框架时表现为"模型变傻"。</p>
+    <p class="fix">启动命令永远带 <code>--jinja</code>，用模型自带模板。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑⑥</span>ctx 开太大，KV cache 吃爆内存进 swap 死亡螺旋</h4>
+    <p>看到"1M 上下文"就开 512K？KV cache 会把最后 100GB 余量吃光，macOS 开始 swap，速度从 15 tok/s 掉到 &lt;1 tok/s 且风扇狂转。</p>
+    <p class="fix">512GB 机器从 <code>--ctx-size 65536</code> 起步，盯着活动监视器的内存压力逐步上调；黄色压力就是上限了。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑⑦</span>macOS 休眠 / 下载中断</h4>
+    <p>默认节能设置下 Mac 会睡眠：410GB 下载断在 90%、跑了一半的 llama-server 停摆。</p>
+    <p class="fix">服务用 <code>caffeinate -s</code> 拉起；下载开 <code>HF_HUB_ENABLE_HF_TRANSFER=1</code>（断点续传，重跑同一条命令即续传）；系统设置里关掉"硬盘睡眠"。</p>
+  </div>
+
+  <div class="pit">
+    <h4><span class="pn">坑⑧</span>多分片 GGUF 用法错误</h4>
+    <p>4-bit 权重分成 9 个分片文件，有人只下了第一个分片、或 <code>-m</code> 指向了中间分片，加载必然失败。</p>
+    <p class="fix">9 个分片全部下载、放同一目录、保持原文件名；<code>-m</code> 永远指向 <code>00001-of-0000N</code>，其余自动加载。</p>
+  </div>
+
+  <div class="callout">
+    <b>🔌 别忘了电力侧的坑也会杀进程</b>
+    储能电站的 Eco 模式半夜断电（见 3B 坑①）对部署的杀伤力不亚于任何软件问题——模型重新加载一次 10 分钟起步。软硬两侧的坑要一起排。
+  </div>
+</section>
+
 <!-- ===================== 成本 ===================== -->
 <section id="cost">
-  <h2><span class="num">05</span>成本与性能：本地 vs 云端</h2>
+  <h2><span class="num">06</span>成本与性能：本地 vs 云端</h2>
   <p class="lede">先说结论：这套方案<b>不是为了省钱</b>，是为了隐私、离网和不依赖任何厂商。</p>
 
   <table>
@@ -468,7 +741,7 @@ sudo sysctl iogpu.wired_limit_mb=480000</pre>
 
 <!-- ===================== 冷静清单 ===================== -->
 <section id="caveats">
-  <h2><span class="num">06</span>冷静清单：自我反驳一次</h2>
+  <h2><span class="num">07</span>冷静清单：自我反驳一次</h2>
   <p class="lede">重要决策前，主动反驳自己的结论。以下每一条都可能推翻"值得搭"的判断。</p>
 
   <div class="grid c2">
@@ -486,7 +759,7 @@ sudo sysctl iogpu.wired_limit_mb=480000</pre>
     </div>
     <div class="card">
       <h4>反驳 ④：运维不是零成本</h4>
-      <p>太阳能板要清洁、电池冬天衰减、发电机要保养加油。"零月费"指电费，不含你的时间成本。</p>
+      <p>太阳能板要清洁、电池冬天衰减、发电机要保养加油。"零月费"指电费，不含你的时间成本。prefill 慢和单人限制（避坑 ②③）也意味着体验上限低于云端。</p>
     </div>
   </div>
 </section>
@@ -500,6 +773,8 @@ sudo sysctl iogpu.wired_limit_mb=480000</pre>
     <a href="https://ofox.ai/blog/glm-5-2-run-locally-gguf-2026/" target="_blank">ofox: 256GB Mac 跑 GLM-5.2</a> ·
     <a href="https://codersera.com/blog/how-to-run-glm-5-2-locally-2026/" target="_blank">codersera: 硬件与量化指南</a> ·
     <a href="https://particula.tech/blog/how-to-run-glm-5-2-locally" target="_blank">particula: GLM-5.2 部署</a> ·
+    <a href="https://github.com/ggml-org/llama.cpp/discussions/1945" target="_blank">llama.cpp: Mac prefill 慢的讨论</a> ·
+    <a href="https://github.com/sloppy-org/slopcode-infra/issues/22" target="_blank">GLM-5.2 RPC 实测与 prefill 瓶颈</a> ·
     <a href="https://www.macworld.com/article/2973459/2026-mac-studio-m5-release-date-specs-price-rumors.html" target="_blank">Macworld: M5 Mac Studio 传闻</a> ·
     <a href="https://forums.macrumors.com/threads/m5-ultra-mac-studio-could-launch-in-2026-with-up-to-768gb-of-ram.2484565/" target="_blank">MacRumors: M5 Ultra 768GB</a>
   </div>
@@ -507,6 +782,7 @@ sudo sysctl iogpu.wired_limit_mb=480000</pre>
 </footer>
 
 <script>
+/* ---------- power calculator ---------- */
 function calc() {
   var h = +document.getElementById('hours').value;
   var sun = +document.getElementById('sun').value;
@@ -517,11 +793,12 @@ function calc() {
   var genFreq = sun >= 5 ? '很少' : (sun >= 4 ? '偶尔' : '每周补电');
   document.getElementById('kwh').textContent = kwh.toFixed(1) + ' kWh';
   document.getElementById('panels').textContent = panels + ' 块';
-  document.getElementById('batt').textContent = batt.toFixed(1) + ' kWh';
-  document.getElementById('gen').textContent = genFreq;
+  document.getElementById('batt2').textContent = batt.toFixed(1) + ' kWh';
+  document.getElementById('gen2').textContent = genFreq;
 }
 calc();
 
+/* ---------- copy buttons ---------- */
 function copyCode(btn) {
   var pre = btn.closest('.codeblock').querySelector('pre');
   navigator.clipboard.writeText(pre.textContent).then(function () {
@@ -529,6 +806,117 @@ function copyCode(btn) {
     setTimeout(function () { btn.textContent = '复制'; }, 1500);
   });
 }
+
+/* ---------- dynamic assembly diagram ---------- */
+var STEPS = [
+  { comps: [], flows: [], title: '准备开始',
+    desc: '点击「播放拆解」逐件搭建系统；或点右上角场景按钮，看晴天 / 夜间 / 阴雨三种模式下电流怎么走。' },
+  { comps: ['comp-solar'], flows: [], title: '第 1 步 · 太阳能板（主力电源）',
+    desc: '4 块 400W 板组成 1.6kW 阵列，朝南、倾角≈纬度、全天无阴影。日照良好地区每天发 6–8 kWh。详见「太阳能安装」章节的零基础接线教程。' },
+  { comps: ['comp-solar', 'comp-batt'], flows: ['solar'], title: '第 2 步 · 储能电站（电力中枢）',
+    desc: '太阳能板经 MPPT 接口直充电站。电站 = UPS + 逆变器 + 充电控制器三合一，全系统所有电源都必须经过它。记得关掉 Eco 自动关机模式。' },
+  { comps: ['comp-solar', 'comp-batt', 'comp-gen'], flows: ['solar', 'gen'], title: '第 3 步 · 燃油发电机（阴雨备份）',
+    desc: '连续阴雨天时启动，接电站 AC 快充口，1–2 小时充到 80% 即关。它只给电池充电，永远不直接带 Mac——发电机电压不稳。' },
+  { comps: ['comp-solar', 'comp-batt', 'comp-gen', 'comp-mac'], flows: ['solar', 'ac'], title: '第 4 步 · Mac Studio 上线',
+    desc: 'Mac 接电站的纯正弦波 AC 输出，满载仅 ~270W。至此硬件闭环：白天太阳能边发边用，夜间电池放电，阴雨发电机补位。' }
+];
+
+var SCENARIOS = {
+  day:   { flows: ['solar', 'ac'], dim: ['comp-gen'],
+           txt: { solar: '正在发电 · 边用边充', batt: '盈余充入电池', gen: '待机' },
+           title: '☀️ 晴天模式', desc: '太阳能直接供电，多余电量充入电池。发电机休息。这是理想状态，一年中的大多数日子。' },
+  night: { flows: ['ac'], dim: ['comp-solar', 'comp-gen'],
+           txt: { solar: '夜间 · 0W', batt: '电池放电中', gen: '待机' },
+           title: '🌙 夜间模式', desc: '太阳能归零，电池独立供电。3.6kWh 电池按 300W 负载可撑约 8–9 小时（按可用容量 72% 折算）。' },
+  rain:  { flows: ['gen', 'ac'], dim: ['comp-solar'],
+           txt: { solar: '阴雨 · 输出 <15%', batt: '发电机补电中', gen: '运行中 · 充到 80% 即停' },
+           title: '🌧️ 连续阴雨模式', desc: '太阳能输出跌到标称 5–15%，启动发电机给电站快充补电，充满即关。Mac 始终从电站取电，全程无感。' }
+};
+
+var DEFAULT_TXT = { solar: '日发电 6–8 kWh', batt: '所有电源必经此处', gen: '连续阴雨天备份' };
+var playTimer = null;
+
+function applyFlows(flows) {
+  ['solar', 'gen', 'ac'].forEach(function (f) {
+    var on = flows.indexOf(f) >= 0;
+    document.getElementById('line-' + f).className.baseVal = 'flowline' + (on ? ' active' : '');
+    document.getElementById('arr-' + f).className.baseVal = 'arrhead' + (on ? ' show' : '');
+    document.getElementById('lab-' + f).className.baseVal = 'flowlabel' + (on ? ' show' : '');
+  });
+}
+
+function setTexts(txt) {
+  document.getElementById('txt-solar').textContent = txt.solar;
+  document.getElementById('txt-batt').textContent = txt.batt;
+  document.getElementById('txt-gen').textContent = txt.gen;
+}
+
+function setDesc(title, desc) {
+  document.getElementById('diagDesc').innerHTML = '<b></b><span></span>';
+  document.getElementById('diagDesc').querySelector('b').textContent = title;
+  document.getElementById('diagDesc').querySelector('span').textContent = desc;
+}
+
+function markChips(stepIdx) {
+  var chips = document.querySelectorAll('#stepChips button');
+  chips.forEach(function (c, i) { c.classList.toggle('on', i + 1 === stepIdx); });
+  document.querySelectorAll('#scenBtns button').forEach(function (b) { b.classList.remove('on'); });
+}
+
+function setStep(i) {
+  stopPlay();
+  renderStep(i);
+}
+
+function renderStep(i) {
+  var s = STEPS[i];
+  ['comp-solar', 'comp-batt', 'comp-gen', 'comp-mac'].forEach(function (id) {
+    var el = document.getElementById(id);
+    el.classList.remove('dimmed');
+    el.classList.toggle('on', s.comps.indexOf(id) >= 0);
+  });
+  applyFlows(s.flows);
+  setTexts(DEFAULT_TXT);
+  setDesc(s.title, s.desc);
+  markChips(i);
+}
+
+function playAssembly() {
+  stopPlay();
+  var i = 0;
+  renderStep(0);
+  document.getElementById('playBtn').textContent = '⏸ 播放中…';
+  playTimer = setInterval(function () {
+    i++;
+    if (i >= STEPS.length) { stopPlay(); return; }
+    renderStep(i);
+  }, 1800);
+}
+
+function stopPlay() {
+  if (playTimer) { clearInterval(playTimer); playTimer = null; }
+  document.getElementById('playBtn').textContent = '▶ 播放拆解';
+}
+
+function setScenario(key) {
+  stopPlay();
+  var sc = SCENARIOS[key];
+  ['comp-solar', 'comp-batt', 'comp-gen', 'comp-mac'].forEach(function (id) {
+    var el = document.getElementById(id);
+    el.classList.add('on');
+    el.classList.toggle('dimmed', sc.dim.indexOf(id) >= 0);
+  });
+  applyFlows(sc.flows);
+  setTexts(sc.txt);
+  setDesc(sc.title, sc.desc);
+  document.querySelectorAll('#stepChips button').forEach(function (c) { c.classList.remove('on'); });
+  document.querySelectorAll('#scenBtns button').forEach(function (b) {
+    b.classList.toggle('on', b.getAttribute('data-s') === key);
+  });
+}
+
+/* initial state: fully assembled day view so the diagram isn't blank on load */
+setScenario('day');
 </script>
 </body>
 </html>
