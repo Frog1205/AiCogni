@@ -138,9 +138,13 @@
   .lg-dot.a{ background: linear-gradient(135deg, var(--a1), var(--a2)); }
   .lg-dot.b{ background: linear-gradient(135deg, var(--b1), var(--b2)); }
 
-  .resource-download{
+  .resource-list{
     max-width: 680px;
     margin-top: 36px;
+    display: grid;
+    gap: 12px;
+  }
+  .resource-download{
     padding: 20px 22px;
     display: flex;
     align-items: center;
@@ -371,18 +375,32 @@
       <div class="legend-item"><span class="lg-dot a"></span>国内直连</div>
       <div class="legend-item"><span class="lg-dot b"></span>海外工具链推荐</div>
     </div>
-    <aside class="resource-download" aria-labelledby="inspiration-card-title">
-      <div class="resource-copy">
-        <span class="resource-icon" aria-hidden="true">✦</span>
-        <span>
-          <strong id="inspiration-card-title">AI 灵感卡</strong>
-          <span>从发现问题开始，写下你的第一个 AI 作品 · Word 文档</span>
-        </span>
-      </div>
-      <a class="download-button" href="./downloads/ai-inspiration-card.docx" download="AI灵感卡.docx" type="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-        下载灵感卡 <span aria-hidden="true">↓</span>
-      </a>
-    </aside>
+    <div class="resource-list" aria-label="AI 创作卡片下载">
+      <aside class="resource-download" aria-labelledby="inspiration-card-title">
+        <div class="resource-copy">
+          <span class="resource-icon" aria-hidden="true">✦</span>
+          <span>
+            <strong id="inspiration-card-title">AI 灵感卡</strong>
+            <span>从发现问题开始，写下你的第一个 AI 作品 · Word 文档</span>
+          </span>
+        </div>
+        <a class="download-button" href="./downloads/ai-inspiration-card.docx" download="AI灵感卡.docx" type="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          下载灵感卡 <span aria-hidden="true">↓</span>
+        </a>
+      </aside>
+      <aside class="resource-download" aria-labelledby="design-card-title">
+        <div class="resource-copy">
+          <span class="resource-icon" aria-hidden="true">◇</span>
+          <span>
+            <strong id="design-card-title">AI 设计卡</strong>
+            <span>明确用户、核心功能与作品结构 · Word 文档</span>
+          </span>
+        </div>
+        <a class="download-button" href="./downloads/ai-design-card.docx" download="AI设计卡.docx" type="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          下载设计卡 <span aria-hidden="true">↓</span>
+        </a>
+      </aside>
+    </div>
   </header>
 
   <div class="cards">
